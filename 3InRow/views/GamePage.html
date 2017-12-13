@@ -1,0 +1,227 @@
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/game.js" type="text/javascript" charset="utf-8" ></script>
+    <link rel="stylesheet" type="text/css" href="../js/bootstrap/css/bootstrap.min.css">
+	<style type="text/css" media="screen">
+		
+	.gameLevel{
+		font-size: 24px;
+	}
+
+	.gameLevel img{
+		margin-top: 30px;
+		height: 50px;
+		width: 50px;
+	}
+
+	.gems{
+		display: inline-block;
+		margin-right: 35px;
+	}
+
+	canvas{
+		border: 1px solid #DDDA9B;
+		background-color: FCF9BA;
+	}
+
+	.moves{
+		font-size: 30px;
+		color: lightgreen;
+		margin-left: 150px;
+	}
+
+	@keyframes example {
+    		 0%   {color: lightCoral; transform: rotate(0deg)}
+    		33%  {color: yellow; transform:rotate(180deg)}
+   			 66%  {color: green; transform:rotate(270deg)}
+		}
+
+		.gameOver{
+			font-size:154px;
+			position: absolute;		
+			top: 150px;
+			left: 70px;
+			color: orange;
+			 animation-name: example;
+    		animation-duration: 4s;
+   			  animation-iteration-count: infinite;
+   			 display: none;
+		}
+
+	</style>
+</head>
+<body >
+    <div class="row">
+        <div class="col-md-7">
+	<div  id="game">
+	<canvas id="gameCanvas" width="500" height="500" ></canvas>
+	</div>
+
+	<div class="gameLevel">
+		<div class="gems">
+			<div>
+				<img src="../images/gem1.png" width="30px">
+			</div>
+		
+			<span id="gem1">0</span>
+		</div>
+
+		<div class="gems">
+			<div>
+				<img src="../images/gem2.png" width="30px">
+			</div>
+		
+			<span id="gem2">0</span>
+		</div>
+
+		<div class="gems">
+			<div>
+				<img src="../images/gem3.png" width="30px">
+			</div>
+		
+			<span id="gem3">0</span>
+		</div>
+
+		<div class="gems">
+			<div>
+				<img src="../images/gem4.png" width="30px">
+			</div>
+		
+			<span id="gem4">0</span>
+		</div>
+
+		<div class="gems">
+			<div>
+				<img src="../images/gem5.png" width="4	0px">
+			</div>
+		
+			<span id="gem5">0</span>
+		</div>
+
+		<div class="gems">
+			<div>
+				<img src="../images/gem6.png" width="30px">
+			</div>
+		
+			<span id="gem6">0</span>
+		</div>
+			
+	</div>
+
+	<div class="gems moves">
+		<span>Moves:</span>
+		<span id="moves">0</span>
+	</div>
+            </div>
+                <div class="col-md-4">
+                   <div class="row">
+		          	<div class="col-md-12">
+		                  <div class="row">		
+  		            	   <button type="" class="btn btn-warning" onclick="backToMain()">Main Menu</button>
+		                  </div>
+                        <div class="row">		
+  		            	   <button type="" class="btn btn-success" onclick="saveGameButtonHandler()">Save Game</button>
+                            <div id="saveName" style="display:none;margin-top:25px;">
+                                <div class="input-group" >
+					               <span class="input-group-addon"  >Input Name</span>
+  				                   <input id="saveNameInput" type="text" class="form-control" placeholder="Save Name" value="" aria-describedby="basic-addon2">        
+                                     <button class="btn btn-success" onclick="saveButtonHandler()">SAVE</button>
+				                </div>
+                               
+                            </div>
+                            
+                        </div>		
+            </div>
+</div>
+
+	<div class="gameOver">
+		<span>Game Over</span>
+	</div>
+    
+
+	
+
+	<script type="text/javascript">
+
+		$(document).ready(_ => {
+                let loadName = getCookie("resumeGame");
+            
+                let mov = localStorage.getItem(`${loadName}_moves`);
+            
+            
+			//TODO it's for new Game
+			if((!loadName || loadName == null) || !mov){
+				
+				moves = getCookie("livesAmount");
+
+				for(let i =0; i <6; i++){
+					let gemAmount = getCookie(`gem${i+1}`);
+
+					if(gemAmount)
+						gemsToWin[i].value = gemAmount;
+				}
+
+				  initCanvas();
+				
+			}
+            else{
+                loadGame(loadName);
+                redrawAllGems();
+            }
+				
+              rewriteScore();
+				let x =0;
+				let y = 0;
+
+				$("#gameCanvas").mousedown(function(event) {
+					captureItem(event.pageX, event.pageY);
+					x = event.pageX;
+					y = event.pageY;
+				});
+
+				$("#gameCanvas").mouseup(function(event) {	
+					let deltaX = event.pageX - x;
+					let deltaY = event.pageY - y;		
+
+					if(deltaY == 0 && deltaX == 0 || capturedItem.src.indexOf("kirp.jpg") != -1){
+						capturedItem = null;
+						return;
+					}
+
+					let d;
+
+					if(Math.abs(deltaY) > Math.abs(deltaX)){
+						d = deltaY > 0 ? "down" : "up";
+					}else{
+						d = deltaX > 0 ? "right" : "left"
+					}
+
+					swapCurrentItem(d);
+
+					capturedItem = null;
+				});
+			
+			});
+        
+        let backToMain = () =>{
+            saveGame("temp");
+            
+            window.location.href = "MainMenu.html";
+        }
+        
+        let saveGameButtonHandler = () => {            
+            if($("#saveName").is(":visible"))
+                $("#saveName").hide();
+            else
+                $("#saveName").show();
+        }
+        
+        let saveButtonHandler = () => {
+            $("#saveName").hide();
+            let name = $("#saveNameInput").val();
+            saveGame(name);
+        }
+	</script>
+</body>

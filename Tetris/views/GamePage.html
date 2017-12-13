@@ -1,0 +1,170 @@
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/game.js" type="text/javascript" charset="utf-8" ></script>
+	<style type="text/css" media="screen">
+		#mainPage span{
+			cursor: pointer;
+			position: absolute;
+			 color:white; font-size: 24px;
+		}
+
+		#gameOver span, #winPage span{
+			cursor: pointer;
+			position: absolute;
+			 color:white; font-size: 24px;
+		}
+
+		canvas{
+			position: absolute;
+		}
+
+
+		.back_to_menu{
+			margin-top: 100px;
+		}
+
+		.gameInfo{
+			margin-left: 20px;
+		}
+
+		.pauseGame{	
+			position: absolute;		
+			top: 50px;
+			left: 15px;
+			font-size: 20px;
+			color: orange;
+		}
+
+		.score{
+			position: absolute;		
+			top: 70px;
+			left: 55px;
+			font-size: 20px;
+			color: orange;
+		}
+		.level{
+			position: absolute;		
+			top: 270px;
+			left: 55px;
+			font-size: 20px;
+			color: orange;
+		}
+
+		#pauseText{
+			color: red;
+		}
+
+		#score{
+			color: black;
+		}
+
+		@keyframes example {
+    		 0%   {color: lightCoral;}
+    		33%  {color: yellow;}
+   			 66%  {color: green;}
+		}
+
+		.gameOver{
+			font-size:54px;
+			position: absolute;		
+			top: 250px;
+			left: 270px;
+			color: orange;
+			 animation-name: example;
+    		animation-duration: 4s;
+   			  animation-iteration-count: infinite;
+   			  display: none;
+		}
+
+	</style>
+</head>
+<body >
+	<div  id="game">
+	<canvas id="gameCanvas" width="250" height="550"></canvas>
+
+	<canvas id="tetrisCanvas" width="300" height="550" style="left:250;border: 1px solid"></canvas>
+	<canvas id="currentBlockCanvas" width="300" height="550" style="left:250;"></canvas>	
+
+	</div>
+
+	<div class="pauseGame">
+		<span>Press space to <span id="pauseText">pause</span> game</span>
+	</div>
+
+	<div class="score">
+		<span>Current score: <span id="score">10</span></span>
+	</div>
+
+	<div class="level">
+		<span>Current level: <span id="level">1</span></span>
+	</div>
+
+	<div class="gameOver">
+		<span>Game Over</span>
+	</div>
+
+	<script type="text/javascript">
+
+		$(document).ready(_ => {
+				initCanvas();
+
+
+			$(document).on('keydown', 'body', function (e) {
+   				if (e.keyCode == 37) { // left
+        			for (shape of currentShape) {  
+        				//todo Check  if false => return 	
+        				if(!canUserMove(shape, 'l')){
+        					return;
+        				}			
+            				
+        			}
+
+        			for(shape of currentShape){
+        				shape.x -= blockSize;//TODO move in real TimE!!!
+        			}
+
+        			redrowDown();
+   				 }
+    			else if (e.keyCode == 39) { // right
+        			for (shape of currentShape) {  
+        				if(!canUserMove(shape, 'r')){
+        					return;
+        				}
+        			}
+
+        			for(shape of currentShape){
+        				shape.x += blockSize;//TODO move in real TimE!!!
+        			}
+        			redrowDown();
+        		} else if(e.keyCode == 38){
+                    moveUp();
+                }
+                else if(e.keyCode == 32){
+                	if(isOnPause)
+                		resumeGame();
+                	else
+                		pauseGame();
+                }
+                else 
+                	if (e.keyCode == 40) { // left
+        			for (shape of currentShape) {  
+        				//todo Check  if false => return 	
+        				if(!canUserMove(shape, 'd')){
+        					return;
+        				}			
+            				
+        			}
+
+        			for(shape of currentShape){
+        				shape.y += blockSize;//TODO move in real TimE!!!
+        			}
+
+        			redrowDown();
+   				 }
+    
+});
+		});
+	</script>
+</body>

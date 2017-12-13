@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8" ></script>
+	<link rel="stylesheet" type="text/css" href="../js/bootstrap/css/bootstrap.min.css">
+	<script src="../js/game.js" type="text/javascript" charset="utf-8" ></script>
+	<style type="text/css" media="screen">
+		button{
+			margin-bottom:15px;
+		}
+
+		.container{
+			margin-top:15px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+		<div class="row">		
+  			<button type="" class="btn btn-warning" onclick="startGame()">Start New Game</button>
+		</div>
+		<div class="row">		
+  			<button type="" class="btn btn-success" onclick="resumeLastGame()">Resume Last Game</button>
+		</div>
+        <div class="row">		
+  			<button type="" class="btn btn-success" onclick="toogleLoadGame()">Load Game</button>
+		</div>
+		<div class="row">		
+  			<button type="" class="btn btn-info" onclick="toogleSettings()">Settings</button>
+		</div>		
+	</div>
+	<div class="col-md-4">
+		
+	</div>
+</div>
+        
+        <div class="row" style="display: none; margin-top:50px;" id="loadGameMenu">			
+		</div>
+
+
+	<div class="row" style="display: none; margin-top:50px;" id="settings">
+			<div class="col-sm-12">
+				<div class="input-group">
+					<span class="input-group-addon" id="basic-addon2" >lives amount</span>
+  				<input id="lives" type="text" class="form-control" placeholder="lives amount" value="25" aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem1.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem1" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem2.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem2" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem3.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem3" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem4.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem4" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem5.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem5" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="input-group">
+					<image src="../images/gem6.png" width="60px" height="60px" class="input-group-addon" 
+					 />
+  				<input id="gem6" type="text" class="form-control" placeholder="lives amount" value="25" 
+  				aria-describedby="basic-addon2">
+  					
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(_ => {
+            initSavings();
+            
+			lives = getCookie("livesAmount");
+
+			if(lives)
+				$("#lives").val(getCookie("livesAmount"));
+
+			for(let i =0; i <7; i++){
+				let gemAmount = getCookie(`gem${i}`);
+
+				if(gemAmount)
+					$(`#gem${i}`).val(gemAmount);
+			}
+		});
+
+		let isSettingsOpen = false;
+
+		let toogleSettings = function(){
+			isSettingsOpen = !isSettingsOpen;
+             $("#loadGameMenu").hide();
+
+			if(isSettingsOpen)
+				$("#settings").show();
+			else
+				$("#settings").hide();
+		}
+
+		let startGame = f => {			
+            setCookie("resumeGame","");
+			setCookie("livesAmount",$("#lives").val());
+
+			for(let i =0; i <7; i++){
+				setCookie(`gem${i}`,$(`#gem${i}`).val());
+			}
+
+			window.location.href="GamePage.html";
+		}
+        
+        let resumeLastGame = () => {
+            setCookie("resumeGame","temp");
+            window.location.href="GamePage.html";
+        }
+        
+        let toogleLoadGame = () => {
+            $("#settings").hide();
+            
+             if($("#loadGameMenu").is(":visible"))
+                $("#loadGameMenu").hide();
+            else
+                $("#loadGameMenu").show();
+        }
+        
+        let LoadGame = name => {
+            setCookie("resumeGame",name);
+            window.location.href="GamePage.html";
+        }
+        
+        let initSavings = () =>
+        { 
+            let saves = [];
+            
+            for (var key in localStorage){
+               if(key.indexOf("gemsToWin") != -1){
+                  let k = key.split("_")[0];
+                   
+                  if(!saves.includes(k))
+                      saves.push(k);
+               }
+            }
+            
+            for(let save of saves){
+                let html = `<div class="col-sm-12">
+				                <div class="input-group">
+					               <span class="" style="margin-right:20px;">${save}</span>  
+                                    <button class="btn btn-success btn-sm" onclick="LoadGame('${save}')">Load</button>
+				                </div>
+			               </div>`;
+                
+                $("#loadGameMenu").append(html);
+            }
+            
+        }
+
+		
+	</script>
+</body>
+</html>

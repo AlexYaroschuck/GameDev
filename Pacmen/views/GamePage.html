@@ -1,0 +1,151 @@
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/game.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/circles.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/board.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/pacman.js" type="text/javascript" charset="utf-8" ></script>
+	<script src="../js/ghost.js" type="text/javascript" charset="utf-8" ></script>
+	<style type="text/css" media="screen">
+		#mainPage span{
+			cursor: pointer;
+			position: absolute;
+			 color:white; font-size: 24px;
+		}
+
+		#gameOver span, #winPage span{
+			cursor: pointer;
+			position: absolute;
+			 color:white; font-size: 24px;
+		}
+
+		canvas{
+			position: absolute;
+		}
+
+		body {
+			background-color: black
+		}
+
+		.back_to_menu{
+			margin-top: 100px;
+		}
+
+		.gameInfo{
+			margin-left: 20px;
+		}
+	</style>
+</head>
+<body >
+	<div style="display:none" id="game">
+	<canvas id="gameCanvas" style="background-color: #000033" width="559" height="379"></canvas>
+	<canvas id="circleCanvas" width="559" height="379"></canvas>
+	<canvas id="boardCanvas" width="559" height="379"></canvas>
+	<canvas id="pacCanvas" width="559" height="379"></canvas>
+
+
+	<canvas id="redGCanvas" width="559" height="379"></canvas>
+	<canvas id="pinkGCanvas" width="559" height="379"></canvas>
+
+	<div style="position: absolute; left:570px;color:white" class="gameInfo">
+		<div><span>Scrore:</span>
+		<span id="score"></span>
+	</div>
+		<div>
+		<span>Level:</span>
+		<span id="level"></span>	
+	</div>
+	<div>
+		<span>Lifes: </span>
+		<span id="lifes"></span>
+	</div>
+
+		<div class="back_to_menu">
+			<span style="cursor: pointer;" id="goToMenu">Go To Menu </span>
+		</div>	
+	</div >
+</div>
+	<div style="position: absolute;width: 559; height: 379; background-color: black" id="mainPage">
+		<img src="../images/Top_main.jpg" width="559" height="340">
+		<span style="top:10;left: 350;" id="topScore">Top score : </span>
+		<span style="top:250;left: 180;" id="startGame">Start New Game</span>
+		<span style="top:290;left: 180;" id="resumeGame">Resume Game</span>
+		<!--<span style="top:330;left: 180;">Settings</span>-->
+	</div>
+
+	<div id="gameOver" style="position: absolute;width: 559; height: 379; background-color: black;display: none">
+		<img src="../images/gameOver.jpg"> 
+		<span style="top:270;left: 170;" id="startGame2">Start New Game</span>
+	</div>
+
+	<div id="winPage" style="position: absolute;width: 559; height: 379; background-color: black;display: none">
+		<img src="../images/win-screen.png"> 
+		<span style="top:270;left: 170;" id="startGame3">Start New Game</span>
+	</div>
+
+	<script type="text/javascript">
+
+		$(document).ready(_ => {
+				getTopScore();
+			$("#startGame").click(function(event) {		
+
+				startGame();
+			});
+
+			$("#resumeGame").click(function(event) {
+				if(!canContinue)
+					return;
+				/* Act on the event */
+				$("#mainPage").hide();
+				$("#game").show();
+
+					moveGhost(redGhost, redGCanvasContext,[pinkGhost]);
+					moveGhost(pinkGhost, pinkGCanvasContext, [redGhost]);
+			});
+
+			$("#startGame2").click(function(event) {
+				$("#gameOver").hide();
+				startGame();
+			});
+
+			$("#startGame3").click(function(event) {
+				$("#winPage").hide();
+				startGame();
+			});
+
+			$("#goToMenu").click(function(event) {
+				$("#mainPage").show();
+				$("#game").hide();
+				$("#gameOver").hide();
+
+				clearInterval(redGhost.interval);
+				clearInterval(pinkGhost.interval);
+			});
+
+			$("body").keydown(function(e) { 
+				 if(lifes <= 0)
+				 	return;
+
+				if ( e.keyCode === 39 ) { 
+						movePacman(1);
+					} else if ( e.keyCode === 40 ) { 
+						movePacman(2);
+					} else if ( e.keyCode === 37 ) { 
+						movePacman(3);
+					} else if ( e.keyCode === 38 ) { 
+						movePacman(4);
+					}			
+				});		
+
+		});
+
+		var getTopScore = function(){
+			let topScore = getCookie("topScore");
+
+			topScore = topScore? topScore : 0;
+
+			$("#topScore").text("Top score : " + topScore);
+		}
+	</script>
+</body>
